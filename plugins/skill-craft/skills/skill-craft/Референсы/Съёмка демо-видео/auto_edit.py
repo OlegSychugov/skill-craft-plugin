@@ -401,8 +401,8 @@ def main():
 
     print("OK: %s (%.1f с, %.1f МБ)" % (mp4, total, os.path.getsize(mp4) / 1e6))
     print("    %s, %s.vtt, %s_poster.png, %s_timeline.json" % (webm, out_base, out_base, out_base))
-    if not 60 <= total <= 100:
-        print("ВНИМАНИЕ: длительность %.0f с вне 60–100 с — поправьте holds/speed" % total)
+    if not 40 <= total <= 100:
+        print("ВНИМАНИЕ: длительность %.0f с вне 40–100 с — поправьте holds/speed" % total)
 
 
 if __name__ == "__main__":

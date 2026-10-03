@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FPS, W, H = 4, 64, 36
 STATIC_TH, DIFF = 0.02, 30
 MAX_STATIC = 3.0          # с — дольше без движения вне holds нельзя
-DUR_RANGE = (60, 100)     # с
+DUR_RANGE = (40, 100)     # с — длительность по содержанию, статикой не растягивать
 MAX_MB = 20
 
 
@@ -96,8 +96,16 @@ def main():
         allowed += [tl["title"], tl["end"]]
         allowed += [s["out"] for s in tl["segments"] if s["kind"] == "hold"]
 
+    # соседние окна (карточка + hold, hold + hold, между ними — сжатый кусок < 0.6 с) склеиваются
+    merged = []
+    for x, y in sorted(allowed):
+        if merged and x <= merged[-1][1] + 0.6:
+            merged[-1][1] = max(merged[-1][1], y)
+        else:
+            merged.append([x, y])
+
     def in_allowed(a, b):
-        return any(a >= x - 0.3 and b <= y + 0.3 for x, y in allowed)
+        return any(a >= x - 0.3 and b <= y + 0.3 for x, y in merged)
 
     blocks, start = [], None
     for i in range(1, len(fr) + 1):
@@ -124,7 +132,7 @@ def main():
     vf = "fps=0.5,scale=480:270"
     if os.path.exists(font):
         vf += (",drawtext=fontfile=font.ttf:text='%{pts\\:hms}':fontsize=18:fontcolor=white"
-               ":box=1:boxcolor=black@0.6:boxborderw=4:x=6:y=6")
+               ":box=1:boxcolor=black@0.6:boxborderw=4:x=w-tw-8:y=h-th-8")  # внизу справа — не закрывает главы
     vf += ",tile=4x3"
     subprocess.run([FFMPEG, "-hide_banner", "-loglevel", "error", "-y", "-i", video, "-vf", vf,
                     "sheet_%02d.png"], cwd=qa, check=True)
