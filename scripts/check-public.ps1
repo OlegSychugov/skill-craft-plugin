@@ -25,7 +25,7 @@ if (Test-Path $Local) {
     foreach ($r in @([IO.File]::ReadAllText($Local, $Utf8) | ConvertFrom-Json)) { foreach ($x in $r) { $i++; $Deny["локальное правило $i"] = $x.Pattern } }
 }
 # Known false positives (literal substrings)
-$Allow = @('noreply@anthropic.com', 'black@0.')
+$Allow = @('noreply@anthropic.com', 'black@0.', 'C:\Windows\Fonts')
 
 $TextExt = '.md', '.html', '.json', '.css', '.py', '.yaml', '.ps1', '.txt', ''
 $self = $MyInvocation.MyCommand.Path
