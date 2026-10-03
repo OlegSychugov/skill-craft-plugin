@@ -240,6 +240,56 @@ def fade_alpha(a, b, f=0.3):
         a + f, a, f, b - f, b, f, a, b)
 
 
+def camera_keyframes(segs, t0, cfg):
+    """Ключевые кадры «виртуальной камеры» (время тела ролика, zoom, cx, cy).
+
+    Зум — только на акцентах (holds с zoom > 1). Наезд начинается за `lead`
+    до акцента и длится `move` с; соседние акценты (зазор < `chain_gap`)
+    связываются переездом без отъезда; отъезд — `move` с после конца акцента.
+    """
+    cam = dict({"move": 1.1, "lead": 0.35, "chain_gap": 1.8}, **cfg.get("camera", {}))
+    acc = [(s["out"][0] - t0, s["out"][1] - t0, s["zoom"], s["c"][0], s["c"][1])
+           for s in segs if s["kind"] == "hold" and s.get("zoom", 1.0) > 1.01]
+    kf = [[0.0, 1.0, 0.5, 0.5]]
+    for i, (a, b, z, cx, cy) in enumerate(acc):
+        # дальний переезд — дольше: 1.1 с на соседнюю область, до 1.8 с через весь кадр
+        pz, px, py = kf[-1][1:]
+        dist = ((cx - px) ** 2 + (cy - py) ** 2) ** 0.5 + abs(z - pz) * 0.3
+        mv = min(1.8, max(cam["move"], 0.9 + 1.6 * dist))
+        st = max(kf[-1][0], a - cam["lead"] - (mv - cam["move"]) / 2)
+        en = min(st + mv, max(st + 0.5, b))
+        kf.append([st] + kf[-1][1:])
+        kf.append([en, z, cx, cy])
+        nxt = acc[i + 1] if i + 1 < len(acc) else None
+        if nxt and nxt[0] - b < cam["chain_gap"]:
+            continue                      # держим кадр до переезда к следующему акценту
+        kf.append([max(b, en), z, cx, cy])
+        kf.append([max(b, en) + cam["move"], 1.0, cx, cy])
+    for k in range(1, len(kf)):           # строго возрастающее время
+        kf[k][0] = max(kf[k][0], kf[k - 1][0] + 0.04)
+    return kf
+
+
+def camera_expr(kfs):
+    """Кусочная интерполяция smootherstep → выражения zoom, x, y для zoompan."""
+    def piece(idx):
+        expr = "%.4f" % kfs[-1][idx]
+        for k in range(len(kfs) - 2, -1, -1):
+            t0, t1 = kfs[k][0], kfs[k + 1][0]
+            v0, v1 = kfs[k][idx], kfs[k + 1][idx]
+            if abs(v1 - v0) < 1e-6:
+                seg = "%.4f" % v0
+            else:
+                p = "clip((ot-%.3f)/%.3f,0,1)" % (t0, t1 - t0)
+                seg = "%.4f+(%.4f)*(%s)*(%s)*(%s)*((%s)*((%s)*6-15)+10)" % (v0, v1 - v0, p, p, p, p, p)
+            expr = "if(lt(ot,%.3f),%s,%s)" % (t1, seg, expr)
+        return expr
+    z = piece(1)
+    x = "clip((%s)*iw-iw/zoom/2,0,iw-iw/zoom)" % piece(2)
+    y = "clip((%s)*ih-ih/zoom/2,0,ih-ih/zoom)" % piece(3)
+    return z, x, y
+
+
 def main():
     if len(sys.argv) < 2:
         die("использование: python auto_edit.py edit.json")
@@ -313,22 +363,22 @@ def main():
         brand_cards.render_title(title, W, H, font_path, png)
         card(png, t_title, "ct", "fade=t=out:st=%.2f:d=0.4:color=white" % (t_title - 0.4))
 
+    # тело ролика: сегменты без зума → одна склейка → одна «виртуальная камера»
+    body = []
     for i, s in enumerate(segs):
         a, b = s["src"]
         ch = "[0:v]trim=start=%.3f:end=%.3f,setpts=(PTS-STARTPTS)/%.4f,fps=%d" % (a, b, s["speed"], FPS)
-        z = s.get("zoom", 1.0)
-        if s["kind"] == "hold" and z > 1.01:
-            n = max(1, int(round((b - a) * FPS)))
-            r = max(1, min(15, n // 3))
-            cx, cy = s["c"]
-            ch += "," + (scale % (W * 2, H * 2, W * 2, H * 2))
-            ch += (",zoompan=z='st(0,clip(min(on/%d,(%d-1-on)/%d),0,1));1+(%.3f-1)*ld(0)*ld(0)*(3-2*ld(0))'"
-                   ":x='clip(%.4f*iw-iw/zoom/2,0,iw-iw/zoom)':y='clip(%.4f*ih-ih/zoom/2,0,ih-ih/zoom)'"
-                   ":d=1:s=%dx%d:fps=%d") % (r, n, r, z, cx, cy, W, H, FPS)
-        else:
-            ch += "," + (scale % (W, H, W, H))
-        chains.append(ch + ",format=yuv420p,setsar=1[v%d]" % i)
-        labels.append("[v%d]" % i)
+        chains.append(ch + "," + (scale % (W, H, W, H)) + ",format=yuv420p,setsar=1[v%d]" % i)
+        body.append("[v%d]" % i)
+    chains.append("%sconcat=n=%d:v=1:a=0[body]" % ("".join(body), len(body)))
+    kfs = camera_keyframes(segs, t_title, cfg)
+    if len(kfs) > 1:
+        z_e, x_e, y_e = camera_expr(kfs)
+        chains.append(("[body]scale=%d:%d:flags=lanczos,zoompan=z='%s':x='%s':y='%s':d=1:s=%dx%d:fps=%d,"
+                       "format=yuv420p,setsar=1[bodycam]") % (W * 2, H * 2, z_e, x_e, y_e, W, H, FPS))
+        labels.append("[bodycam]")
+    else:
+        labels.append("[body]")
 
     if end:
         png = os.path.join(work, "end.png")
@@ -356,6 +406,19 @@ def main():
         over.append(dt(f, fs_call, "white", "(w-tw)/2", "h-th-%d" % int(H * 0.08),
                        (C_TEAL + "@0.95", 20), fade_alpha(a, b)))
         cues.append((a, b, c["text"]))
+    # субтитры — реплики в секундах итогового ролика (как voiceover.json):
+    # "subtitles": "voiceover.json" или [{start, end, text}]; поверх карточек не рисуются
+    subs = cfg.get("subtitles")
+    if isinstance(subs, str):
+        subs = json.load(open(os.path.join(base, subs), encoding="utf-8"))["slots"]
+    for k, sb in enumerate(subs or []):
+        a, b = max(float(sb["start"]), t_title), min(float(sb["end"]), body_end)
+        if b - a < 0.8:
+            continue
+        f = write_text(work, "sub%02d.txt" % k, sb["text"])
+        over.append(dt(f, int(H * 0.032), "white", "(w-tw)/2", "h-th-%d" % int(H * 0.065),
+                       ("0x121212@0.62", 18), fade_alpha(a, b, 0.25)))
+        cues.append((a, b, sb["text"]))
     # бейдж «Ускорено ×N» — один на каждый непрерывный ускоренный отрезок
     fast, run = [], []
     for s in segs + [None]:

@@ -96,10 +96,10 @@ def main():
         allowed += [tl["title"], tl["end"]]
         allowed += [s["out"] for s in tl["segments"] if s["kind"] == "hold"]
 
-    # соседние окна (карточка + hold, hold + hold, между ними — сжатый кусок < 0.6 с) склеиваются
+    # соседние окна (карточка + hold, hold + hold, между ними — сжатый кусок < 1.5 с) склеиваются
     merged = []
     for x, y in sorted(allowed):
-        if merged and x <= merged[-1][1] + 0.6:
+        if merged and x <= merged[-1][1] + 1.5:
             merged[-1][1] = max(merged[-1][1], y)
         else:
             merged.append([x, y])
