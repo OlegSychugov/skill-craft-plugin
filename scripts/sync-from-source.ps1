@@ -14,8 +14,14 @@ $Target = Join-Path $PSScriptRoot "..\plugins\skill-craft\skills\skill-craft"
 New-Item -ItemType Directory -Force $Target | Out-Null
 $Target = (Resolve-Path $Target).Path
 
+# Not published: proprietary GigaCowork brand assets and the SB Sans font.
+# brand_cards.py / auto_edit.py fall back to a brand-coloured gradient and Arial.
+$Exclude = @("*\brand\*", "*\__pycache__\*", "*.ttf", "*.otf")
+
 $changed = @()
-Get-ChildItem $Source -Recurse -File | Where-Object { $_.Name -ne "SKILL.md" -or $_.DirectoryName -ne $Source } | ForEach-Object {
+Get-ChildItem $Source -Recurse -File | Where-Object { $_.Name -ne "SKILL.md" -or $_.DirectoryName -ne $Source } | Where-Object {
+    $p = $_.FullName; -not ($Exclude | Where-Object { $p -like $_ })
+} | ForEach-Object {
     $rel = $_.FullName.Substring($Source.Length + 1)
     $dst = Join-Path $Target $rel
     if (-not (Test-Path $dst) -or (Get-FileHash $_.FullName).Hash -ne (Get-FileHash $dst).Hash) {

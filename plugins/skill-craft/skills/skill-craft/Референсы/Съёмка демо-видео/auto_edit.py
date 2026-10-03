@@ -28,6 +28,9 @@ import sys
 
 import imageio_ffmpeg
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import brand_cards  # noqa: E402  фирменные карточки GigaCowork
+
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 HERE = os.path.dirname(os.path.abspath(__file__))
 FPS = 25
@@ -195,12 +198,25 @@ def build_timeline(cfg, events, dur, mot):
             h["src"][0] = clean[-1]["src"][1]
         if h["src"][1] - h["src"][0] >= 0.3:
             clean.append(h)
+    # cut — вырезаемые куски исходника (простой после ответа агента и т.п.):
+    # склейка без ускорения и без бейджа
+    cuts = sorted((float(a), float(b)) for a, b in cfg.get("cut", []))
+
+    def gap(a, b):
+        out = []
+        for ca, cb in cuts:
+            if cb <= a or ca >= b:
+                continue
+            out += gap_segments(a, max(a, ca), mot, cfg["speed"])
+            a = max(a, cb)
+        return out + gap_segments(a, b, mot, cfg["speed"])
+
     segs, cur = [], S
     for h in clean:
-        segs += gap_segments(cur, h["src"][0], mot, cfg["speed"])
+        segs += gap(cur, h["src"][0])
         segs.append(h)
         cur = h["src"][1]
-    segs += gap_segments(cur, E, mot, cfg["speed"])
+    segs += gap(cur, E)
     out = [s for s in segs if (s["src"][1] - s["src"][0]) / s["speed"] >= 1.0 / FPS]
     return out
 
@@ -276,17 +292,26 @@ def main():
     chains, labels = [], []
     scale = "scale=%d:%d:force_original_aspect_ratio=decrease:flags=lanczos,pad=%d:%d:(ow-iw)/2:(oh-ih)/2:color=white"
 
+    # входы: 0 — запись, далее PNG-карточки, последним — музыка
+    inputs = ["-i", src]
+    n_in = 1
+
+    def card(png, dur, label, fade):
+        """Фирменная карточка (PNG) с медленным наездом камеры 1.00 → 1.04."""
+        nonlocal n_in
+        inputs.extend(["-loop", "1", "-framerate", str(FPS), "-t", "%.3f" % dur, "-i", png])
+        n = max(1, int(round(dur * FPS)))
+        chains.append(("[%d:v]scale=%d:%d:flags=lanczos,zoompan=z='1+0.04*on/%d':x='iw/2-iw/zoom/2':"
+                       "y='ih/2-ih/zoom/2':d=1:s=%dx%d:fps=%d,%s,format=yuv420p,setsar=1[%s]")
+                      % (n_in, W * 2, H * 2, n, W, H, FPS, fade, label))
+        labels.append("[%s]" % label)
+        n_in += 1
+
+    font_path = brand_cards.find_font(cfg.get("font"))
     if title:
-        f1 = write_text(work, "title.txt", title["text"])
-        parts = ["color=c=%s:s=%dx%d:r=%d:d=%.2f" % (C_BG, W, H, FPS, t_title),
-                 "drawbox=x=(iw-%d)/2:y=ih*0.34:w=%d:h=%d:color=%s:t=fill" % (W // 16, W // 16, H // 180, C_TEAL),
-                 dt(f1, int(H * 0.062), C_TEXT, "(w-tw)/2", "h*0.39")]
-        if title.get("subtitle"):
-            parts.append(dt(write_text(work, "title_sub.txt", title["subtitle"]), int(H * 0.032), C_MUTED,
-                            "(w-tw)/2", "h*0.51"))
-        parts.append("fade=t=out:st=%.2f:d=0.4:color=%s" % (t_title - 0.4, C_BG))
-        chains.append(",".join(parts) + ",format=yuv420p,setsar=1[ct]")
-        labels.append("[ct]")
+        png = os.path.join(work, "title.png")
+        brand_cards.render_title(title, W, H, font_path, png)
+        card(png, t_title, "ct", "fade=t=out:st=%.2f:d=0.4:color=white" % (t_title - 0.4))
 
     for i, s in enumerate(segs):
         a, b = s["src"]
@@ -306,19 +331,9 @@ def main():
         labels.append("[v%d]" % i)
 
     if end:
-        parts = ["color=c=%s:s=%dx%d:r=%d:d=%.2f" % (C_BG, W, H, FPS, t_end),
-                 "drawbox=x=(iw-%d)/2:y=ih*0.20:w=%d:h=%d:color=%s:t=fill" % (W // 16, W // 16, H // 180, C_TEAL),
-                 dt(write_text(work, "end_title.txt", end.get("title", "Результат")), int(H * 0.055), C_TEXT,
-                    "(w-tw)/2", "h*0.25")]
-        for k, line in enumerate(end.get("lines", [])[:4]):
-            parts.append(dt(write_text(work, "end_%d.txt" % k, line), int(H * 0.036), C_TEXT,
-                            "(w-tw)/2", "h*%.3f" % (0.40 + 0.09 * k)))
-        if end.get("note"):
-            parts.append(dt(write_text(work, "end_note.txt", end["note"]), int(H * 0.022), C_MUTED,
-                            "(w-tw)/2", "h*0.88"))
-        parts.append("fade=t=in:st=0:d=0.4:color=%s" % C_BG)
-        chains.append(",".join(parts) + ",format=yuv420p,setsar=1[ce]")
-        labels.append("[ce]")
+        png = os.path.join(work, "end.png")
+        brand_cards.render_end(end, W, H, font_path, png)
+        card(png, t_end, "ce", "fade=t=in:st=0:d=0.4:color=white")
 
     chains.append("%sconcat=n=%d:v=1:a=0[cat]" % ("".join(labels), len(labels)))
 
@@ -349,21 +364,20 @@ def main():
             continue
         if run:
             a, b = run[0]["out"][0], run[-1]["out"][1]
-            src_len = run[-1]["src"][1] - run[0]["src"][0]
+            src_len = sum(x["src"][1] - x["src"][0] for x in run)  # без вырезанных кусков
             if b - a >= 0.6 and src_len / (b - a) >= 6:
                 fast.append((a, b, src_len / (b - a)))
             run = []
     for k, (a, b, sp) in enumerate(fast):
-        f = write_text(work, "badge%02d.txt" % k, "Ускорено ×%d" % round(sp))
+        f = write_text(work, "badge%02d.txt" % k, "Ускорено ×%d" % round(sp) if sp <= 60 else "Ускорено")
         over.append(dt(f, fs_badge, "white", "w-tw-48", "40", ("0x121212@0.6", 14),
                        ":enable='between(t,%.3f,%.3f)'" % (a, b)))
     chains.append("[cat]" + (",".join(over) if over else "null") + ",split=2[vm][vw]")
 
     music = cfg.get("music")
-    inputs = ["-i", src]
     if music:
         inputs += ["-i", os.path.join(base, music)]
-        chains.append("[1:a]atrim=0:%.3f,asetpts=PTS-STARTPTS,volume=%ddB,afade=t=in:d=1,"
+        chains.append("[%d:a]atrim" % n_in + "=0:%.3f,asetpts=PTS-STARTPTS,volume=%ddB,afade=t=in:d=1,"
                       "afade=t=out:st=%.3f:d=2,asplit=2[am][aw]" % (total, cfg["music_db"], total - 2))
 
     graph = os.path.join(work, "graph.txt")
