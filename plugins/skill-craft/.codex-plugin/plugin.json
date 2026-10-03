@@ -1,0 +1,21 @@
+{
+  "name": "skill-craft",
+  "version": "2.0.0",
+  "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
+  "author": { "name": "OlegSychugov" },
+  "repository": "https://github.com/OlegSychugov/skill-craft-plugin",
+  "license": "MIT",
+  "keywords": ["skills", "plugins", "authoring", "quality", "checklist", "commands", "codex-plugin"],
+  "interface": {
+    "displayName": "Skill Craft",
+    "shortDescription": "Authoring standard and lifecycle commands for skills and plugins (content in Russian).",
+    "longDescription": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Explicit commands cover the plugin lifecycle — build from draft, review, evals, demo-stand deploy, demo video, client agent page, publishing and the plugins map.",
+    "developerName": "OlegSychugov",
+    "category": "Coding",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": [
+      "Используй skill-craft, чтобы проверить мой плагин по чек-листу приёмки."
+    ]
+  },
+  "skills": "./skills/"
+}

@@ -1,0 +1,76 @@
+{
+  "slug": "gigacowork-official",
+  "name": "GigaCowork Official",
+  "tagline": "Официальный стиль GigaCowork: SB Sans Display, радиальные градиенты, карточки с backdrop blur.",
+  "mood": [
+    "professional",
+    "corporate",
+    "modern",
+    "tech",
+    "trustworthy"
+  ],
+  "occasion": [
+    "corporate presentation",
+    "executive review",
+    "product launch",
+    "quarterly business review",
+    "board meeting",
+    "internal strategy"
+  ],
+  "tone": [
+    "clean",
+    "authoritative",
+    "modern",
+    "corporate",
+    "tech-forward"
+  ],
+  "formality": "high",
+  "density": "medium",
+  "palette": {
+    "bg": "#fafafa",
+    "gradient_primary": "#1AB3B0 → #51B8EE → #A3B5F3",
+    "gradient_alt": "#13B3A7 → #61B8FF → #B0B4F0",
+    "text": "#121212",
+    "white": "#FFFFFF",
+    "state": "#E0E1E7",
+    "teal": "#1AB3B0",
+    "blue": "#51B8EE",
+    "periwinkle": "#A3B5F3",
+    "description": "Светлый фон с радиальными градиентами (бирюзовый, синий, фиолетовый), карточки с glassmorphism эффектом"
+  },
+  "typography": {
+    "display": "SB Sans Display",
+    "body": "SB Sans Display",
+    "style": "Единый шрифт для всех начертаний; только Regular (400); иерархия через размер и цвет"
+  },
+  "scheme": "light",
+  "canvas": {
+    "width": 1280,
+    "height": 720,
+    "aspect_ratio": "16:9",
+    "padding": "24px top, 32px sides, 80px bottom",
+    "grid": "12 columns, 24px gap"
+  },
+  "components": [
+    "gc-card (default, compact, large, container, accent, metric)",
+    "gc-pill (current, positive, category)",
+    "gc-footer",
+    "gc-grid"
+  ],
+  "backgrounds": [
+    "gc-bg-default (стандартный)",
+    "gc-bg-neutral (спокойный для плотного контента)",
+    "gc-bg-hero (выраженный для обложек)"
+  ],
+  "best_for": "Корпоративные презентации GigaCowork, отчёты для руководства, запуск продуктов, квартальные обзоры, стратегические сессии, board meetings. Официальный стиль платформы.",
+  "avoid_for": "Тёмные темы запрещены. Не использовать другие шрифты кроме SB Sans Display. Не создавать произвольные цвета, отступы, эффекты.",
+  "slide_count": 6,
+  "navigation": "inline keyboard handler with on-page slide counter",
+  "source": "Official GigaCowork Design System v0.1",
+  "design_tokens": {
+    "spaces": [4, 8, 12, 16, 24, 32, 40, 48, 56, 64, 80, 96],
+    "radius_card": 20,
+    "radius_pill": 999,
+    "card_shadow": "0 12px 32px rgba(76, 102, 130, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.75)"
+  }
+}
