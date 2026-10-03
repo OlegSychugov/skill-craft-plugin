@@ -189,7 +189,7 @@ def build_timeline(cfg, events, dur, mot):
         ev = find(events, h["at"])
         s, e = max(S, ev["t"] - h.get("pre", 0.5)), min(E, ev["t"] + h.get("post", 3.0))
         cx, cy = h.get("center") or center(ev)
-        holds.append({"src": [s, e], "speed": 1.0, "kind": "hold", "label": h["at"],
+        holds.append({"src": [s, e], "speed": float(h.get("speed", 1.0)), "kind": "hold", "label": h["at"],
                       "zoom": float(h.get("zoom", 1.0)), "c": [cx, cy]})
     holds.sort(key=lambda h: h["src"][0])
     clean = []
@@ -412,12 +412,15 @@ def main():
     if isinstance(subs, str):
         subs = json.load(open(os.path.join(base, subs), encoding="utf-8"))["slots"]
     for k, sb in enumerate(subs or []):
+        if "at" in sb:   # привязка к событию: {"at": "send", "delay": 0.3, "dur": 3.5, "text": ...}
+            a0 = out_time(find(events, sb["at"])["t"]) + float(sb.get("delay", 0.2))
+            sb = dict(sb, start=a0, end=a0 + float(sb.get("dur", 3.5)))
         a, b = max(float(sb["start"]), t_title), min(float(sb["end"]), body_end)
         if b - a < 0.8:
             continue
         f = write_text(work, "sub%02d.txt" % k, sb["text"])
-        over.append(dt(f, int(H * 0.032), "white", "(w-tw)/2", "h-th-%d" % int(H * 0.065),
-                       ("0x121212@0.62", 18), fade_alpha(a, b, 0.25)))
+        over.append(dt(f, int(H * 0.031), "white", "(w-tw)/2", "h-th-%d" % int(H * 0.07),
+                       (cfg.get("subtitle_color", "0x2E9FD8@0.92"), 20), fade_alpha(a, b, 0.3)))
         cues.append((a, b, sb["text"]))
     # бейдж «Ускорено ×N» — один на каждый непрерывный ускоренный отрезок
     fast, run = [], []
@@ -431,7 +434,7 @@ def main():
             if b - a >= 0.6 and src_len / (b - a) >= 6:
                 fast.append((a, b, src_len / (b - a)))
             run = []
-    for k, (a, b, sp) in enumerate(fast):
+    for k, (a, b, sp) in enumerate(fast if cfg.get("badge", False) else []):  # бейдж — только по явному "badge": true
         f = write_text(work, "badge%02d.txt" % k, "Ускорено ×%d" % round(sp) if sp <= 60 else "Ускорено")
         over.append(dt(f, fs_badge, "white", "w-tw-48", "40", ("0x121212@0.6", 14),
                        ":enable='between(t,%.3f,%.3f)'" % (a, b)))

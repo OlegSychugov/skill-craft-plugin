@@ -146,11 +146,11 @@ EVALUATION.md, SYSTEM-DESIGN.md, auto-test.md и DEMO-VIDEO.md — опцион�
 
 ## Где живёт навык
 
-Источник правды — `.kilo/skills/skill-craft/` в cowork_hub (оттуда его
-загружает Kilo). Этот плагин — дистрибутив для Claude Code и Codex;
-содержимое `Референсы/` обновляется скриптом
-`scripts/sync-from-source.ps1` маркетплейса. Сборка плагина каталога
-Cowork описана в команде `new-plugin`.
+Источник правды — этот репозиторий (`skill-craft-marketplace`): правки
+вносятся прямо сюда. Перед публикацией —
+`scripts/sanitize-public.ps1` и `scripts/check-public.ps1`. Фирменные
+ассеты (`Съёмка демо-видео/brand/`) и шрифт SB Sans лежат локально и в git
+не попадают. Сборка плагина каталога Cowork описана в команде `new-plugin`.
 
 Действия в `cowork_hub/` (ветки, коммиты, PR) — только по
 `Референсы/PUBLISHING.md` и с явной просьбы пользователя.

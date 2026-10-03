@@ -1,5 +1,5 @@
 ﻿# Strip personal and client data from the plugin before it goes to a public repository.
-# Applied by sync-from-source.ps1 after copying; safe to run repeatedly.
+# Run before every push (the repository is public); safe to run repeatedly.
 #
 # Two rule sets:
 #   - generic regex rules below (safe to publish);

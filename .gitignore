@@ -1,2 +1,8 @@
 # Local sanitize rules contain the literal strings being removed - never commit
 scripts/*.local.json
+
+# Proprietary GigaCowork brand assets and SB Sans font: kept locally for rendering, never published
+**/brand/
+*.ttf
+*.otf
+__pycache__/
