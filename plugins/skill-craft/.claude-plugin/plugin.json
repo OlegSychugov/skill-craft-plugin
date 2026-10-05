@@ -1,6 +1,6 @@
 {
   "name": "skill-craft",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
   "author": { "name": "OlegSychugov" },
   "repository": "https://github.com/OlegSychugov/skill-craft-plugin",

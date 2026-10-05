@@ -23,6 +23,9 @@ disable-model-invocation: true
 - Гейт вердикта: если в Testing-папке есть `evals/`, нужен
   `evals/results/<последняя дата>/вердикт.md` с итогом PASS. Нет `evals/` —
   гейта нет.
+- Гейт агента: в Testing-папке есть `agents/*.md`, его `skills` совпадает
+  с составом `skills/` (`AGENT-MD.md`). Нет агента или расхождение —
+  не публиковать, предложить `review-plugin`.
 
 ## Шаги
 
