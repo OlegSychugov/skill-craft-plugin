@@ -469,7 +469,10 @@ def main():
 
     def ts(x):
         return "%02d:%02d:%06.3f" % (x // 3600, x % 3600 // 60, x % 60)
-    with open(out_base + ".vtt", "w", encoding="utf-8") as f:
+    # текст уже вшит в кадр: .vtt с именем ролика рядом с mp4 плееры подхватывают
+    # сами и рисуют второй слой поверх вшитого — поэтому кладём его в _edit/
+    vtt = os.path.join(work, os.path.basename(out_base) + ".vtt")
+    with open(vtt, "w", encoding="utf-8") as f:
         f.write("WEBVTT\n\n")
         for k, (a, b, text) in enumerate(sorted(cues), 1):
             f.write("%d\n%s --> %s\n%s\n\n" % (k, ts(a), ts(b), text))
@@ -480,7 +483,7 @@ def main():
     json.dump(timeline, open(out_base + "_timeline.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
     print("OK: %s (%.1f с, %.1f МБ)" % (mp4, total, os.path.getsize(mp4) / 1e6))
-    print("    %s, %s.vtt, %s_poster.png, %s_timeline.json" % (webm, out_base, out_base, out_base))
+    print("    %s, %s, %s_poster.png, %s_timeline.json" % (webm, vtt, out_base, out_base))
     if not 40 <= total <= 100:
         print("ВНИМАНИЕ: длительность %.0f с вне 40–100 с — поправьте holds/speed" % total)
 
