@@ -41,13 +41,13 @@ EVALUATION.md, SYSTEM-DESIGN.md, auto-test.md и DEMO-VIDEO.md — опцион�
 
 | Команда | Что делает | Референс |
 |---|---|---|
-| `new-plugin` | черновик `backlog/01. ToDo/<x>` → плагин в `backlog/02. Testing/<alias>/` + синтетические тест-данные | METHODOLOGY.md, SKILL-AUTHORING.md |
+| `new-plugin` | черновик `<cfg:todo_dir>/<x>` → плагин в `<cfg:testing_dir>/<alias>/` + синтетические тест-данные | METHODOLOGY.md, SKILL-AUTHORING.md |
 | `review-plugin` | ревизия плагина по чек-листу приёмки, только чтение | этот файл, SKILL-AUTHORING.md |
 | `test-plugin` | сборка `evals/` и вердикт по результатам прогона | EVALUATION.md |
 | `deploy-plugin` | ручное развёртывание на демо-стенде через браузер | auto-test.md |
 | `demo-video` | демо-ролик для клиента: запись с журналом событий, автомонтаж, приёмка | DEMO-VIDEO.md |
 | `agent-page` | итоговая клиентская HTML-страница агента | AGENT-HTML.md |
-| `publish-plugin` | Testing → `plugins/<alias>`, ветка `feature/<alias>`, PR | PUBLISHING.md |
+| `publish-plugin` | `<cfg:testing_dir>/<alias>` → `<cfg:plugins_dir>/<alias>`, ветка `feature/<alias>`, PR | PUBLISHING.md |
 | `plugins-map` | обновление узла плагина в `Plugins-map.md` | PLUGINS-MAP.md |
 
 Жизненный цикл: `new-plugin → review-plugin → (test-plugin) →
@@ -56,23 +56,33 @@ EVALUATION.md, SYSTEM-DESIGN.md, auto-test.md и DEMO-VIDEO.md — опцион�
 ## Настройки окружения
 
 Адреса и пути окружения не зашиты в навык: в тексте они записаны как
-`<cfg:ключ>`, значения — в `.skill-craft.json` в корне cowork_hub.
+`<cfg:ключ>`, значения — в `.skill-craft.json` в корне рабочего места
+(папка, рядом с которой лежат каталог витрины и конвейер `pipeline/`).
 Образец — `skill-craft.config.example.json` рядом с этим файлом.
 
 | Ключ | Что это |
 |---|---|
+| `catalog_dir` | папка каталога витрины (git-репозиторий; все git-шаги выполняются в ней) |
+| `plugins_dir` | опубликованные плагины внутри каталога |
+| `ideas_dir` | папка идей конвейера |
+| `todo_dir` | папка черновиков конвейера |
+| `testing_dir` | папка плагинов в тестировании |
+| `archive_dir` | папка архива конвейера |
+| `demos_dir` | папка демо-материалов |
 | `hub_repo_url` | веб-адрес репозитория витрины |
 | `hub_base_branch` | основная ветка (`master` или `main`) |
 | `hub_pr_url` | ссылка на создание PR, шаблон с `{base}` и `{branch}` |
 | `demo_stand_url` | адрес демо-стенда |
 | `video_share_url` | файлообменник для демо-роликов |
 | `video_share_folder` | папка роликов на файлообменнике |
-| `plugins_map_path` | путь к `Plugins-map.md` относительно корня cowork_hub |
+| `plugins_map_path` | путь к `Plugins-map.md` относительно корня рабочего места |
 
+Пути — относительные от корня рабочего места. Файловая работа с плагинами
+конвейера идёт по этим путям, git-операции каталога — в `catalog_dir`.
 Встретив `<cfg:ключ>`, подставь значение из файла. Файла или ключа нет —
 спроси у пользователя только нужные ключи, создай/дополни
-`.skill-craft.json` и добавь его в `.git/info/exclude` cowork_hub, чтобы
-он не попал в коммиты. Значения не выдумывать.
+`.skill-craft.json` и добавь его в `.git/info/exclude` (в каталоге
+витрины — чтобы не попал в коммиты). Значения не выдумывать.
 
 ## Чек-лист приёмки чистовика
 

@@ -12,10 +12,10 @@ disable-model-invocation: true
 
 ## Предусловия
 
-- Рабочий корень — репозиторий cowork_hub (есть `categories.yaml`); иначе
-  спроси путь.
+- Рабочий корень — корень рабочего места, где лежит `.skill-craft.json`;
+  иначе спроси путь.
 - Поиск плагина: путь из `$ARGUMENTS` как есть, иначе
-  `backlog/02. Testing/<alias>/`, затем `plugins/<alias>/`. Не найден или
+  `<cfg:testing_dir>/<alias>/`, затем `<cfg:plugins_dir>/<alias>/`. Не найден или
   `$ARGUMENTS` пусто — покажи доступные alias из обеих папок и спроси.
 
 ## Шаги
