@@ -1,9 +1,16 @@
 {
+  "catalog_dir": "catalog",
+  "plugins_dir": "catalog/plugins",
+  "ideas_dir": "pipeline/00-ideas",
+  "todo_dir": "pipeline/01-todo",
+  "testing_dir": "pipeline/02-testing",
+  "archive_dir": "pipeline/90-archive",
+  "demos_dir": "demos",
+  "plugins_map_path": "maps/Plugins-map.md",
   "hub_repo_url": "https://git.example.com/org/cowork_hub",
   "hub_base_branch": "master",
   "hub_pr_url": "https://git.example.com/org/cowork_hub/pulls/new/{base}...{branch}",
   "demo_stand_url": "https://demo.example.com",
   "video_share_url": "https://files.example.com/files",
-  "video_share_folder": "Demo videos",
-  "plugins_map_path": "../../Plugins-map.md"
+  "video_share_folder": "Demo videos"
 }

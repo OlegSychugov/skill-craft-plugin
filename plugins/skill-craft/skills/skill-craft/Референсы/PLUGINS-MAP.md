@@ -43,20 +43,20 @@
 
 | STATUS | Значение |
 |---|---|
-| `idea` | `backlog/00. Ideas` |
-| `todo` | `backlog/01. ToDo` |
-| `testing` | `backlog/02. Testing` |
-| `draft` | папка в `plugins/` без `plugin.yaml` |
-| `local` | `plugins/` c `plugin.yaml`, нет на gitverse |
+| `idea` | `<cfg:ideas_dir>` |
+| `todo` | `<cfg:todo_dir>` |
+| `testing` | `<cfg:testing_dir>` |
+| `draft` | папка в `<cfg:plugins_dir>/` без `plugin.yaml` |
+| `local` | `<cfg:plugins_dir>/` c `plugin.yaml`, нет на gitverse |
 | `remote-branch` | ветка на gitverse содержит плагин, в master не влит |
 | `published` | влит в `origin/master` gitverse |
-| `archived` | перенесён в `.Archive/` |
+| `archived` | перенесён в `<cfg:archive_dir>` |
 
 Дедупликация по ALIAS: одна сущность = один узел со статусом самой продвинутой
 стадии (`published` > `remote-branch` > `testing` > `todo` > `idea` > `draft`
 > `local`; `archived` уступает любому живому статусу того же ALIAS). Прочие
 локации — в `annotation` («локальная копия удалена», «тестовые материалы в
-backlog/02. Testing»).
+<cfg:testing_dir>»).
 
 ### Типы CrossLinks
 
@@ -80,19 +80,23 @@ RELEVANCE ≥ 7 у `OVERLAPS_WITH` — сильный кандидат на сл
 
 - Создание плагина/навыка → узел добавляется в карту сразу (обязательный шаг
   чек-листа приёмки в `SKILL.md`).
-- Статус по git: `git ls-tree --name-only origin/master plugins/` (fetch —
+- Статус по git: `git -C <cfg:catalog_dir> ls-tree --name-only origin/master
+  <cfg:plugins_dir>/` (fetch —
   только с явного разрешения пользователя; без fetch статус определяется по
   уже имеющемуся локальному `origin/master`). Локальный `origin/master` может
   отставать — статус фиксируется на момент проверки, `UPDATED` отражает дату.
-- Манифест remote-плагина: `git show origin/master:plugins/<alias>/plugin.yaml`;
-  для ветки: `git show origin/<ветка>:plugins/<alias>/plugin.yaml`. Ветку
-  включать, только если она добавляет папку `plugins/<alias>`, которой нет в
+- Манифест remote-плагина: `git -C <cfg:catalog_dir> show
+  origin/master:<cfg:plugins_dir>/<alias>/plugin.yaml`;
+  для ветки: `git -C <cfg:catalog_dir> show
+  origin/<ветка>:<cfg:plugins_dir>/<alias>/plugin.yaml`. Ветку
+  включать, только если она добавляет папку
+  `<cfg:plugins_dir>/<alias>`, которой нет в
   master, и имя плагина не совпадает с уже опубликованным (ранняя итерация
   того же плагина узла не создаёт — пометка в annotation опубликованного узла).
   Влитые и reverted ветки — не узлы.
 - Пуш ветки в gitverse → `STATUS="remote-branch"`; merge PR в master →
   `STATUS="published"` + обновить `VERSION` и `UPDATED`; архивирование в
-  `.Archive/` → `archived`; ревизия сущности → актуализировать
+  `<cfg:archive_dir>` → `archived`; ревизия сущности → актуализировать
   `annotation` / `keywords` / связи / `VERSION`.
 - `UPDATED` — дата последней проверки/изменения узла (ГГГГ-ММ-ДД).
 

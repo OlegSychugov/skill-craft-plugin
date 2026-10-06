@@ -9,13 +9,13 @@ Marketplace for **Claude Code** and **OpenAI Codex** with the `skill-craft` plug
 
 | Command | What it does |
 |---|---|
-| `new-plugin` | Build a plugin from a draft in `backlog/01. ToDo` into `backlog/02. Testing` |
+| `new-plugin` | Build a plugin from a draft in the pipeline todo folder into the pipeline testing folder |
 | `review-plugin` | Review a plugin against the acceptance checklist (read-only) |
 | `test-plugin` | Build the eval layer, or grade a run into a PASS/FAIL verdict |
 | `deploy-plugin` | Deploy a plugin to the demo stand through the browser |
 | `demo-video` | Record and edit a 1:20–1:40 demo video with subtitles |
 | `agent-page` | Build the client-facing HTML page of the agent |
-| `publish-plugin` | Move to `plugins/`, push `feature/<alias>`, open a PR |
+| `publish-plugin` | Move to the catalog plugins folder, push `feature/<alias>`, open a PR |
 | `plugins-map` | Update the plugin node in `Plugins-map.md` or analyze merges |
 
 Lifecycle: `new-plugin → review-plugin → (test-plugin) → (deploy-plugin) → (demo-video → agent-page) → publish-plugin → plugins-map`.
@@ -39,7 +39,7 @@ Run a command: `$new-plugin <draft-folder>`. Commands carry `agents/openai.yaml`
 
 ## Configuration
 
-Environment addresses are not hardcoded: the skills reference them as `<cfg:key>`. Put the values into `.skill-craft.json` at the root of your hub repository (see `plugins/skill-craft/skills/skill-craft/skill-craft.config.example.json`): repository and PR URLs, base branch, demo stand, video file share, path to `Plugins-map.md`. If the file is missing, a command asks for the keys it needs, creates the file and adds it to `.git/info/exclude`.
+Environment addresses are not hardcoded: the skills reference them as `<cfg:key>`. Put the values into `.skill-craft.json` at the root of your workspace — the folder that contains the catalog checkout and the pipeline folders (see `plugins/skill-craft/skills/skill-craft/skill-craft.config.example.json`): repository and PR URLs, base branch, pipeline folder paths (`catalog_dir`, `plugins_dir`, `todo_dir`, `testing_dir`, `ideas_dir`, `archive_dir`, `demos_dir`), demo stand, video file share, path to `Plugins-map.md`. Git operations on the catalog run inside `catalog_dir`. If the file is missing, a command asks for the keys it needs, creates the file and adds it to `.git/info/exclude`.
 
 ## Layout
 

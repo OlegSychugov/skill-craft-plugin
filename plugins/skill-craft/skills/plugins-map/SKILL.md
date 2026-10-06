@@ -1,6 +1,6 @@
 ---
 name: plugins-map
-description: Update a plugin node in the cowork_hub Plugins-map.md knowledge graph — status, version, skills, cross-links — or run a merge-candidate analysis, per the skill-craft graph specification.
+description: Update a plugin node in the Plugins-map.md knowledge graph — status, version, skills, cross-links — or run a merge-candidate analysis, per the skill-craft graph specification.
 argument-hint: <alias> | merge
 disable-model-invocation: true
 ---
@@ -20,10 +20,12 @@ disable-model-invocation: true
 
 ## Шаги: узел плагина
 
-- [ ] 1. Найди плагин: `plugins/`, `backlog/02. Testing/`, `01. ToDo/`,
-      `00. Ideas/`, `.Archive/`. Прочитай манифест и состав навыков.
-- [ ] 2. Определи STATUS по git (`git ls-tree --name-only origin/master
-      plugins/` по локальному `origin/master`). `git fetch` — только с
+- [ ] 1. Найди плагин: `<cfg:plugins_dir>/`, `<cfg:testing_dir>/`,
+      `<cfg:todo_dir>/`, `<cfg:ideas_dir>/`, `<cfg:archive_dir>/`.
+      Прочитай манифест и состав навыков.
+- [ ] 2. Определи STATUS по git (`git -C <cfg:catalog_dir> ls-tree
+      --name-only origin/master <cfg:plugins_dir>/` по локальному
+      `origin/master`). `git fetch` — только с
       разрешения пользователя.
 - [ ] 3. Категория — из `categories.yaml`; узел — внутри неё.
 - [ ] 4. Заполни/обнови `keywords`, `terms`, `annotation` (≤ 2 предложений),

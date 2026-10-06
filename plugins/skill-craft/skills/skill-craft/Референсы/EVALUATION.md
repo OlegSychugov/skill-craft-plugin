@@ -52,7 +52,7 @@ Eval-слой — не часть контракта витрины: `METHODOLOG
 `evals/` живёт в Testing-папке плагина, рядом с fixtures:
 
 ```
-backlog/02. Testing/<alias>/
+<cfg:testing_dir>/<alias>/
   …плагин по стандарту skill-craft (plugin.yaml, skills/, README.md)…
   Данные агента <Название>/     # fixtures — синтетика (шаг 8 /сделай-плагин)
   evals/

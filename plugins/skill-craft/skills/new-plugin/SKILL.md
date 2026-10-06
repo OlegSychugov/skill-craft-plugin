@@ -1,20 +1,21 @@
 ---
 name: new-plugin
-description: Build a Cowork plugin from a draft in backlog/01. ToDo into backlog/02. Testing following the skill-craft standard, with synthetic test data and an acceptance checklist report.
-argument-hint: <папка черновика в backlog/01. ToDo>
+description: Build a Cowork plugin from a draft in the pipeline todo folder into the pipeline testing folder following the skill-craft standard, with synthetic test data and an acceptance checklist report.
+argument-hint: <имя папки черновика>
 disable-model-invocation: true
 ---
 
 # new-plugin — собрать плагин из черновика
 
-Собери плагин из черновика `backlog/01. ToDo/$ARGUMENTS` по стандарту
+Собери плагин из черновика `<cfg:todo_dir>/$ARGUMENTS` по стандарту
 skill-craft для репозитория cowork_hub.
 
 ## Предусловия
 
-- Рабочий корень — репозиторий cowork_hub (в корне есть `categories.yaml`).
-  Если его нет в текущей папке — спроси путь, не угадывай.
-- Если `$ARGUMENTS` пусто — покажи подкаталоги `backlog/01. ToDo/` и спроси,
+- Рабочий корень — корень рабочего места, где лежит `.skill-craft.json`;
+  каталог витрины — `<cfg:catalog_dir>` (в нём `categories.yaml`).
+  Если файла настроек нет в текущей папке — спроси путь, не угадывай.
+- Если `$ARGUMENTS` пусто — покажи подкаталоги `<cfg:todo_dir>/` и спроси,
   какой брать. Несколько аргументов — обработай последовательно.
 
 ## Шаги
@@ -23,16 +24,16 @@ skill-craft для репозитория cowork_hub.
       `../skill-craft/Референсы/METHODOLOGY.md` (контракт полей и структуры),
       `SKILL-AUTHORING.md` (как писать тело), `HARNESS-DESCRIPTION.md`
       (ограничения платформы).
-- [ ] 2. **Черновик.** Прочитай все файлы `backlog/01. ToDo/$ARGUMENTS/`.
+- [ ] 2. **Черновик.** Прочитай все файлы `<cfg:todo_dir>/$ARGUMENTS/`.
       Выдели: назначение агента, сценарии запросов, ограничения,
       входные/выходные форматы, тон.
 - [ ] 3. **Alias.** Латиница, цифры, дефис/подчёркивание, ≤ 64 символов.
       Покажи пользователю и дождись подтверждения до создания файлов.
 - [ ] 4. **Категория.** Строго из `categories.yaml`. Новые категории не
       создавать — backend Cowork поддерживает только текущий справочник.
-- [ ] 5. **Идемпотентность.** Если `backlog/02. Testing/<alias>/` уже есть —
+- [ ] 5. **Идемпотентность.** Если `<cfg:testing_dir>/<alias>/` уже есть —
       спроси: перезаписать, объединить или отменить.
-- [ ] 6. **Структура** в `backlog/02. Testing/<alias>/`:
+- [ ] 6. **Структура** в `<cfg:testing_dir>/<alias>/`:
       - `plugin.yaml` — пять обязательных полей: `name`, `description`,
         `category`, `version` (целое ≥ 1), `tags` (непустой список slug);
         `ui` — опционален;
@@ -46,7 +47,7 @@ skill-craft для репозитория cowork_hub.
       - `commands/`, `agents/` — только если нужны по черновику.
       HTML-страницу в корне плагина не создавать (стандарт `agent.html`
       отменён 2026-10-01; клиентская страница — команда `agent-page`).
-- [ ] 7. **Тест-данные.** Папка `backlog/02. Testing/<alias>/Данные агента
+- [ ] 7. **Тест-данные.** Папка `<cfg:testing_dir>/<alias>/Данные агента
       <Название на русском>/` — синтетические входные файлы
       (docx/xlsx/csv/pdf — по специфике черновика). Никаких реальных
       персональных или коммерческих данных; названия, люди и суммы — по
@@ -61,13 +62,13 @@ skill-craft для репозитория cowork_hub.
 
 ## Ограничения
 
-- Черновик в `backlog/01. ToDo/` не удалять — он нужен для повторных итераций.
+- Черновик в `<cfg:todo_dir>/` не удалять — он нужен для повторных итераций.
 - В инструкциях плагина: без `pip install` и интернета из `python_run`;
   файловые операции — через `sys-*`; визуализация — `sys-infographics`.
 - Факты не выдумывать: недостающее помечать `<TBD: что уточнить>`.
 
 ## Формат отчёта
 
-Alias, путь в `02. Testing/`, список созданных файлов, открытые `<TBD>`,
+Alias, путь в `<cfg:testing_dir>/`, список созданных файлов, открытые `<TBD>`,
 таблица чек-листа (пункт → ОК/FAIL → деталь), следующий шаг:
 `review-plugin` или `test-plugin`.

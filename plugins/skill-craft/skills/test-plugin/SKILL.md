@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # test-plugin — evals: сборка и вердикт
 
-Два режима для плагина из `backlog/02. Testing/<alias>/`:
+Два режима для плагина из `<cfg:testing_dir>/<alias>/`:
 
 - `test-plugin <alias>` — собрать `evals/`;
 - `test-plugin <alias> grade <дата>` — проградировать
@@ -17,7 +17,8 @@ disable-model-invocation: true
 
 ## Предусловия
 
-- Рабочий корень — cowork_hub; плагин в `backlog/02. Testing/<alias>/`.
+- Рабочий корень — корень рабочего места (`.skill-craft.json`); плагин в
+  `<cfg:testing_dir>/<alias>/`.
   Нет alias — покажи доступные и спроси.
 - Загрузи навык `skill-craft` и прочитай
   `../skill-craft/Референсы/EVALUATION.md` целиком — он задаёт структуру,
@@ -25,7 +26,7 @@ disable-model-invocation: true
 
 ## Режим «сборка»
 
-- [ ] 1. Прочитай SKILL.md плагина (и черновик в `backlog/01. ToDo/`, если
+- [ ] 1. Прочитай SKILL.md плагина (и черновик в `<cfg:todo_dir>/`, если
       есть): триггеры, анти-триггеры, пограничные случаи, критерии
       качества, критические ошибки.
 - [ ] 2. Кейсы (§3): минимум триггер, анти-триггер, пограничный.
@@ -51,7 +52,7 @@ disable-model-invocation: true
 ## Ограничения
 
 - `evals/` и `results/` — внутренние QA-материалы: не переносить в
-  `plugins/` и не пушить (§11).
+  `<cfg:plugins_dir>/` и не пушить (§11).
 - Прогон на стенде выполняет пользователь (или `deploy-plugin` для
   установки); команда не имитирует результаты прогона.
 
