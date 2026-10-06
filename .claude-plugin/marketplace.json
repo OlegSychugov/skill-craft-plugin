@@ -6,7 +6,7 @@
       "name": "skill-craft",
       "source": "./plugins/skill-craft",
       "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "category": "development"
     }
   ]
