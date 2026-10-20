@@ -1,52 +1,42 @@
 ---
 name: plugins-map
-description: Update a plugin node in the Plugins-map.md knowledge graph — status, version, skills, cross-links — or run a merge-candidate analysis, per the skill-craft graph specification.
+description: Update a plugin node in the Plugins-map.md knowledge graph — status, version, skills, cross-links — or run a merge-candidate analysis across the catalog.
 argument-hint: <alias> | merge
 disable-model-invocation: true
 ---
 
 # plugins-map — граф плагинов
 
+## Цель
+
+Держать карту каталога честной: по ней ищут дубли функций и кандидатов
+на слияние, а также видят, на какой стадии каждый плагин.
+
 - `plugins-map <alias>` — добавить или актуализировать узел плагина;
-- `plugins-map merge` — анализ кандидатов на слияние.
+- `plugins-map merge` — отчёт о кандидатах на слияние, граф не меняется.
 
-## Предусловия
+## Вход и выход
 
-- Загрузи навык `skill-craft` и прочитай
-  `../skill-craft/Референсы/PLUGINS-MAP.md` целиком: формат XML, атрибуты,
-  словарь статусов, правила дедупликации и компактности.
-- Файл карты — `<cfg:plugins_map_path>` (настройки — навык `skill-craft`,
-  раздел «Настройки окружения»). Не найден — спроси путь, не создавай новый.
+- Карта — `<cfg:plugins_map_path>` (`../skill-craft/Референсы/CONFIG.md`).
+  Не найдена — спроси путь, новую не создавай.
+- Плагин ищется в `<cfg:plugins_dir>`, `<cfg:testing_dir>`,
+  `<cfg:todo_dir>`, `<cfg:ideas_dir>`, `<cfg:archive_dir>`.
 
-## Шаги: узел плагина
+## Опора
 
-- [ ] 1. Найди плагин: `<cfg:plugins_dir>/`, `<cfg:testing_dir>/`,
-      `<cfg:todo_dir>/`, `<cfg:ideas_dir>/`, `<cfg:archive_dir>/`.
-      Прочитай манифест и состав навыков.
-- [ ] 2. Определи STATUS по git (`git -C <cfg:catalog_dir> ls-tree
-      --name-only origin/master <cfg:plugins_dir>/` по локальному
-      `origin/master`). `git fetch` — только с
-      разрешения пользователя.
-- [ ] 3. Категория — из `categories.yaml`; узел — внутри неё.
-- [ ] 4. Заполни/обнови `keywords`, `terms`, `annotation` (≤ 2 предложений),
-      узлы навыков (только для живых статусов), `VERSION`, `UPDATED`
-      (сегодняшняя дата).
-- [ ] 5. CrossLinks — только с опорой на состав и annotation обоих узлов;
-      симметричные связи — один раз.
-- [ ] 6. Покажи diff узла пользователю и запиши после подтверждения.
+`Референсы/PLUGINS-MAP.md` — формат XML, атрибуты, словарь статусов,
+определение статуса по git, дедупликация, именование тегов, рецепт
+анализа слияния.
 
-## Шаги: merge
+## Границы
 
-- [ ] 1. Рецепт анализа слияния из PLUGINS-MAP.md: `OVERLAPS_WITH` с
-      RELEVANCE ≥ 7 → сравнение keywords навыков → вывод.
-- [ ] 2. Только отчёт; граф не менять.
+- Статус по git определяется по локальной ссылке
+  `origin/<cfg:hub_base_branch>`; `git fetch` — только с разрешения
+  пользователя.
+- Связь ставится только с опорой на состав и annotation обоих узлов.
+- Diff узла показать пользователю и записать после подтверждения.
 
-## Ограничения
+## Отчёт
 
-- Карта внутренняя: в gitverse и в плагины не переносится.
-- Имена тегов — по правилам именования; уникальность во всём документе.
-
-## Формат отчёта
-
-Узел до/после (XML), источник статуса. Для merge — таблица пар
+Узел до/после (XML) и источник статуса. Для merge — таблица
 `плагин A | плагин B | RELEVANCE | общие keywords | вывод`.

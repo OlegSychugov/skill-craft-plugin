@@ -5,8 +5,8 @@
 по графу ищутся дубли функций и кандидаты на слияние плагинов, отслеживаются
 статусы публикаций.
 
-Файл карты: `<cfg:plugins_map_path>` (путь относительно корня cowork_hub). Карта внутренняя, в gitverse
-не едет и в плагин не переносится.
+Файл карты: `<cfg:plugins_map_path>` (от корня рабочего места). Карта внутренняя: в gitverse
+и в плагины не переносится.
 
 ## Спецификация формата
 
@@ -16,7 +16,7 @@
 ### Структура XML
 
 - Корень `<KnowledgeGraph>`. Топ-уровень — 7 узлов категорий из
-  `cowork_hub/categories.yaml` (например `<Аналитика_и_финансы ALIAS="analytics">`).
+  7 категорий backend (`METHODOLOGY.md` §3) (например `<Аналитика_и_финансы ALIAS="analytics">`).
 - Плагин — вложенный узел категории: `TYPE="IN_CATEGORY"`.
 - Внутренний навык плагина — вложенный узел плагина: `TYPE="IS_PART_OF"`.
 - Порядок детей внутри узла: `keywords` → `terms` → `annotation` →
@@ -48,8 +48,8 @@
 | `testing` | `<cfg:testing_dir>` |
 | `draft` | папка в `<cfg:plugins_dir>/` без `plugin.yaml` |
 | `local` | `<cfg:plugins_dir>/` c `plugin.yaml`, нет на gitverse |
-| `remote-branch` | ветка на gitverse содержит плагин, в master не влит |
-| `published` | влит в `origin/master` gitverse |
+| `remote-branch` | ветка на gitverse содержит плагин, в базовую ветку не влит |
+| `published` | влит в базовую ветку gitverse |
 | `archived` | перенесён в `<cfg:archive_dir>` |
 
 Дедупликация по ALIAS: одна сущность = один узел со статусом самой продвинутой
@@ -78,23 +78,22 @@ RELEVANCE ≥ 7 у `OVERLAPS_WITH` — сильный кандидат на сл
 
 ## Процедура обновления и определение статуса
 
-- Создание плагина/навыка → узел добавляется в карту сразу (обязательный шаг
-  чек-листа приёмки в `SKILL.md`).
-- Статус по git: `git -C <cfg:catalog_dir> ls-tree --name-only origin/master
+- Создание плагина или навыка → узел добавляется в карту сразу.
+- Статус по git: `git -C <cfg:catalog_dir> ls-tree --name-only origin/<cfg:hub_base_branch>
   <cfg:plugins_dir>/` (fetch —
   только с явного разрешения пользователя; без fetch статус определяется по
-  уже имеющемуся локальному `origin/master`). Локальный `origin/master` может
+  уже имеющемуся локальному `origin/<cfg:hub_base_branch>`). Локальный `origin/<cfg:hub_base_branch>` может
   отставать — статус фиксируется на момент проверки, `UPDATED` отражает дату.
 - Манифест remote-плагина: `git -C <cfg:catalog_dir> show
-  origin/master:<cfg:plugins_dir>/<alias>/plugin.yaml`;
+  origin/<cfg:hub_base_branch>:<cfg:plugins_dir>/<alias>/plugin.yaml`;
   для ветки: `git -C <cfg:catalog_dir> show
   origin/<ветка>:<cfg:plugins_dir>/<alias>/plugin.yaml`. Ветку
   включать, только если она добавляет папку
   `<cfg:plugins_dir>/<alias>`, которой нет в
-  master, и имя плагина не совпадает с уже опубликованным (ранняя итерация
+  базовой ветке, и имя плагина не совпадает с уже опубликованным (ранняя итерация
   того же плагина узла не создаёт — пометка в annotation опубликованного узла).
   Влитые и reverted ветки — не узлы.
-- Пуш ветки в gitverse → `STATUS="remote-branch"`; merge PR в master →
+- Пуш ветки в gitverse → `STATUS="remote-branch"`; merge PR →
   `STATUS="published"` + обновить `VERSION` и `UPDATED`; архивирование в
   `<cfg:archive_dir>` → `archived`; ревизия сущности → актуализировать
   `annotation` / `keywords` / связи / `VERSION`.
@@ -117,7 +116,7 @@ RELEVANCE ≥ 7 у `OVERLAPS_WITH` — сильный кандидат на сл
 - У узла навыка — только `keywords` (без `terms`/`annotation`); полный
   контент — в SKILL.md плагина.
 - `KIND="skill"` — отдельные навыки `skills/` (вне плагинов): узел наравне с
-  плагинами в категории. Сейчас каталог пуст — узлов нет, правило заложено.
+  плагинами в категории.
 - Категории вне справочника `categories.yaml` в ветках (`finance`,
   `procurement`, `support`) не создают новых узлов-категорий: узел кладётся в
   ближайшую допустимую категорию, расхождение фиксируется в annotation.

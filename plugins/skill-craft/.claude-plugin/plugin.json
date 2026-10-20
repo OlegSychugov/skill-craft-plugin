@@ -1,9 +1,9 @@
 {
   "name": "skill-craft",
-  "version": "2.1.0",
-  "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
+  "version": "3.0.0",
+  "description": "Standard for designing and building Cowork catalog plugins: a smart model plans from the user's goal, an executor builds by the plan. Commands: design, new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
   "author": { "name": "OlegSychugov" },
   "repository": "https://github.com/OlegSychugov/skill-craft-plugin",
-  "keywords": ["skills", "plugins", "authoring", "quality", "checklist", "commands", "codex"],
+  "keywords": ["skills", "plugins", "authoring", "planning", "quality", "commands", "codex"],
   "license": "MIT"
 }

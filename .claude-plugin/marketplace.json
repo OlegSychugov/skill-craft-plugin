@@ -5,8 +5,8 @@
     {
       "name": "skill-craft",
       "source": "./plugins/skill-craft",
-      "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
-      "version": "2.1.0",
+      "description": "Standard for designing and building Cowork catalog plugins: a smart model plans from the user's goal, an executor builds by the plan. Commands: design, new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
+      "version": "3.0.0",
       "category": "development"
     }
   ]

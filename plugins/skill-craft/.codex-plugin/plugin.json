@@ -1,20 +1,20 @@
 {
   "name": "skill-craft",
-  "version": "2.1.0",
-  "description": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Commands: new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
+  "version": "3.0.0",
+  "description": "Standard for designing and building Cowork catalog plugins: a smart model plans from the user's goal, an executor builds by the plan. Commands: design, new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
   "author": { "name": "OlegSychugov" },
   "repository": "https://github.com/OlegSychugov/skill-craft-plugin",
   "license": "MIT",
-  "keywords": ["skills", "plugins", "authoring", "quality", "checklist", "commands", "codex-plugin"],
+  "keywords": ["skills", "plugins", "authoring", "planning", "quality", "commands", "codex-plugin"],
   "interface": {
     "displayName": "Skill Craft",
-    "shortDescription": "Authoring standard and lifecycle commands for skills and plugins (content in Russian).",
-    "longDescription": "Quality standard for authoring skills and plugins: naming, descriptions, degrees of freedom, progressive disclosure, acceptance checklist. Explicit commands cover the plugin lifecycle — build from draft, review, evals, demo-stand deploy, demo video, client agent page, publishing and the plugins map.",
+    "shortDescription": "Plan and build Cowork catalog plugins from the user's goal (content in Russian).",
+    "longDescription": "Standard for Cowork catalog plugins built around the user's goal: a smart model writes the plugin plan, an executor builds it. Explicit commands cover the lifecycle — design, build, review, evals, demo-stand deploy, demo video, client agent page, publishing and the plugins map.",
     "developerName": "OlegSychugov",
     "category": "Coding",
     "capabilities": ["Interactive", "Read", "Write"],
     "defaultPrompt": [
-      "Используй skill-craft, чтобы проверить мой плагин по чек-листу приёмки."
+      "Используй skill-craft, чтобы спланировать плагин под мою цель."
     ]
   },
   "skills": "./skills/"
