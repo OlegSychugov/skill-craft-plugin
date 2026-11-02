@@ -12,7 +12,7 @@
 # Usage: powershell -ExecutionPolicy Bypass -File scripts/sanitize-public.ps1
 
 $ErrorActionPreference = "Stop"
-$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\plugins\skill-craft")).Path
+$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\plugins\create-plugin")).Path
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 
 $Rules = @(

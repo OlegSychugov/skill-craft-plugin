@@ -1,0 +1,20 @@
+{
+  "name": "create-plugin",
+  "version": "3.1.0",
+  "description": "Build GigaCowork catalog plugins — agent, skills, commands — that work reliably and talk to non-technical users in plain words (content in Russian).",
+  "author": { "name": "OlegSychugov" },
+  "license": "MIT",
+  "keywords": ["gigacowork", "skills", "plugins", "agents", "authoring", "ux", "codex-plugin"],
+  "interface": {
+    "displayName": "GigaCowork Create Plugin",
+    "shortDescription": "Build GigaCowork catalog plugins that non-technical users understand (content in Russian).",
+    "longDescription": "Standard and procedure for building GigaCowork catalog plugins: how the agent behaves and talks to a non-technical user, degrees of freedom per step, working files versus results, commands without parameters, and the catalog import contract.",
+    "developerName": "OlegSychugov",
+    "category": "Coding",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": [
+      "Собери плагин GigaCowork по моему плану."
+    ]
+  },
+  "skills": "./skills/"
+}

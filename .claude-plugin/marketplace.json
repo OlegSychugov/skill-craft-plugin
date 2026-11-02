@@ -1,12 +1,12 @@
 {
-  "name": "skill-craft-marketplace",
+  "name": "gigacowork-create-plugin",
   "owner": { "name": "OlegSychugov" },
   "plugins": [
     {
-      "name": "skill-craft",
-      "source": "./plugins/skill-craft",
-      "description": "Standard for designing and building Cowork catalog plugins: a smart model plans from the user's goal, an executor builds by the plan. Commands: design, new, review, test, deploy and publish plugin, demo video, agent page, plugins map.",
-      "version": "3.0.0",
+      "name": "create-plugin",
+      "source": "./plugins/create-plugin",
+      "description": "Build GigaCowork catalog plugins — agent, skills, commands — that work reliably and talk to non-technical users in plain words (content in Russian).",
+      "version": "3.1.0",
       "category": "development"
     }
   ]

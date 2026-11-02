@@ -1,0 +1,8 @@
+{
+  "name": "create-plugin",
+  "version": "3.1.0",
+  "description": "Build GigaCowork catalog plugins — agent, skills, commands — that work reliably and talk to non-technical users in plain words (content in Russian).",
+  "author": { "name": "OlegSychugov" },
+  "license": "MIT",
+  "keywords": ["gigacowork", "skills", "plugins", "agents", "authoring", "ux"]
+}

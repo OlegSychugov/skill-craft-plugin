@@ -1,14 +1,14 @@
 {
-  "name": "skill-craft-marketplace",
+  "name": "gigacowork-create-plugin",
   "interface": {
-    "displayName": "Skill Craft"
+    "displayName": "GigaCowork Create Plugin"
   },
   "plugins": [
     {
-      "name": "skill-craft",
+      "name": "create-plugin",
       "source": {
         "source": "local",
-        "path": "./plugins/skill-craft"
+        "path": "./plugins/create-plugin"
       },
       "policy": {
         "installation": "AVAILABLE",
